@@ -1,10 +1,5 @@
 #include <iostream>
 
-class Player {
-    public:
-    // Player logic will go here later
-};
-
 class Board {
     public:
         char array[3][3]; // 3x3 board
@@ -96,33 +91,85 @@ class Board {
         }
 };
 
+class Game {
+    public:
+    // Game logic will go here later
+    Board board;
+    char currentPlayer;
+
+    Game(){
+        currentPlayer = 'X'; //Player X will always start first
+    }
+
+    void getPlayerMove() {
+        int row, col;
+
+        while (true) { // Loop until the user provides valid input
+            std::cout << "Player " << currentPlayer << ", enter the row (0-2): ";
+            std::cin >> row;
+
+            std::cout << "Player " << currentPlayer << ", enter the column (0-2): ";
+            std::cin >> col;
+
+            // Check if row and column are within bounds
+            if (row < 0 || row > 2 || col < 0 || col > 2) {
+                std::cout << "Invalid input. Row and column must be between 0 and 2. Try again.\n";
+                continue;
+            }
+
+            // Check if the position is already occupied
+            if (board.array[row][col] == 'X' || board.array[row][col] == 'O') {
+                std::cout << "That spot is already taken. Try another one.\n";
+                continue;
+            }
+
+            // If valid, update the board and break the loop
+            board.update(row, col, currentPlayer);
+            break;
+        }
+    }
+
+    void switchPlayer(char &currentPlayer){
+        if(currentPlayer == 'X'){
+            currentPlayer = 'O';
+        }
+        else if(currentPlayer == 'O'){
+            currentPlayer = 'X';
+        }
+
+    }
+
+    
+
+    void playGame(){
+        
+        for(int i = 0; i < 10; i++){
+            board.display();
+            std::cout << "input a place to put your move";
+            getPlayerMove();
+
+            if(board.checkWin(currentPlayer)){
+                board.display();
+                std::cout << "Congrats to " << currentPlayer<< " you are the winner of the game";
+                break;
+            }
+
+            if (board.isFull()){
+                board.display();
+                std::cout << "sorry guys its a draw";
+                break;
+            }
+
+            switchPlayer(currentPlayer);
+
+        }
+        
+    }
+};
+
 int main() {
-    Board one;
-
-    // Display the initial board
-    one.display();
-
-    // Update some positions
-    one.update(0, 0, 'X');
-    one.update(1, 1, 'X');
-    one.update(2, 2, 'X');
-
-    // Display the board after updates
-    one.display();
-
-    // Check if the board is full
-    if (one.isFull()) {
-        std::cout << "The board is full!" << std::endl;
-    } else {
-        std::cout << "The board is not full yet." << std::endl;
-    }
-
-    // Check if 'X' has won
-    if (one.checkWin('X')) {
-        std::cout << "Player X wins!" << std::endl;
-    } else {
-        std::cout << "No winner yet!" << std::endl;
-    }
-
+    Game game; // Create a new instance of the game
+    game.playGame(); // Start the game
     return 0;
+
 }
